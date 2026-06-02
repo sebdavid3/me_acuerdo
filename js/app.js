@@ -237,6 +237,17 @@ function initEvents() {
 /* =============================================================
    11. ARRANQUE
    ============================================================= */
+async function initVisitorCount() {
+  const el = document.getElementById('visitorCount');
+  if (!el) return;
+  if (CONFIG.SUPABASE_ANON_KEY === 'REEMPLAZAR_CON_ANON_KEY') {
+    el.textContent = '0000';
+    return;
+  }
+  const count = await incrementVisitorCount();
+  el.textContent = String(count).padStart(4, '0');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initSupabase();
   initAuth();
@@ -246,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initEvents();
   initSound();
   initInfiniteScroll();
+  initVisitorCount();
 
   if (CONFIG.SUPABASE_ANON_KEY === 'REEMPLAZAR_CON_ANON_KEY') {
     loadDemoData();

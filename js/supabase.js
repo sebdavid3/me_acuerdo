@@ -96,6 +96,35 @@ async function searchEntries(query) {
   return data || [];
 }
 
+async function fetchVisitorCount() {
+  if (!supabaseClient) return 0;
+  const { data, error } = await supabaseClient
+    .from('settings')
+    .select('value')
+    .eq('key', 'visitor_count')
+    .single();
+  if (error) return 0;
+  return parseInt(data?.value, 10) || 0;
+}
+
+async function incrementVisitorCount() {
+  if (!supabaseClient) return 0;
+  const current = await fetchVisitorCount();
+  const next = current + 1;
+
+  if (current === 0) {
+    await supabaseClient
+      .from('settings')
+      .insert([{ key: 'visitor_count', value: String(next) }]);
+  } else {
+    await supabaseClient
+      .from('settings')
+      .update({ value: String(next) })
+      .eq('key', 'visitor_count');
+  }
+  return next;
+}
+
 async function fetchEntriesByMonth(year, month) {
   if (!supabaseClient) return [];
   const start = `${year}-${String(month).padStart(2, '0')}-01`;
