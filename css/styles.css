@@ -96,6 +96,86 @@ body {
   gap: var(--sp-xl);
 }
 
+/* Recuerdo del día — entrada destacada */
+.featured-memory-container {
+  margin-bottom: var(--sp-xl);
+}
+.featured-memory {
+  background: var(--c-paper);
+  border-radius: var(--r-md);
+  padding: var(--sp-xl);
+  position: relative;
+  box-shadow:
+    0 2px 8px rgba(43, 33, 24, 0.08),
+    0 8px 24px rgba(43, 33, 24, 0.06);
+  border: 1px solid rgba(94, 75, 120, 0.2);
+  overflow: hidden;
+}
+.featured-memory::before {
+  content: ""; position: absolute; inset: 0; border-radius: var(--r-md);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
+  background-size: 150px 150px; opacity: 0.4; mix-blend-mode: multiply; pointer-events: none;
+  z-index: 0;
+}
+.featured-memory::after {
+  content: "✦";
+  position: absolute;
+  top: -12px; right: -8px;
+  font-size: 3rem;
+  color: rgba(94, 75, 120, 0.08);
+  pointer-events: none;
+  z-index: 0;
+}
+.feat-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-sm);
+  margin-bottom: var(--sp-md);
+  position: relative;
+  z-index: 1;
+}
+.feat-label {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--c-tertiary);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.feat-star {
+  font-size: 1rem;
+  color: var(--c-tertiary);
+  opacity: 0.6;
+  animation: feat-glitter 2s ease-in-out infinite;
+}
+.feat-star:last-child { animation-delay: 1s; }
+@keyframes feat-glitter {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+.feat-body {
+  position: relative;
+  z-index: 1;
+}
+.feat-date {
+  font-family: var(--font-hand);
+  font-size: 1rem;
+  color: var(--c-ink-faded);
+  display: block;
+  margin-bottom: var(--sp-sm);
+}
+.feat-text {
+  font-family: var(--font-entry);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--c-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.feat-text .entry-prefix {
+  color: var(--c-tertiary);
+}
+
 /* Tarjeta de recuerdo */
 .entry-card {
   background: var(--c-paper);

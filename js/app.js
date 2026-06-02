@@ -5,12 +5,22 @@
 let allEntries = [];
 let currentEntries = [];
 let playFlipSound = () => {};
+let playClickSound = () => {};
 
 /* =============================================================
    1. SONIDO (Web Audio API)
    ============================================================= */
 function initSound() {
   try { playFlipSound = createFlipSound(); } catch(e) {}
+  try { playClickSound = createClickSound(); } catch(e) {}
+
+  // Delegación global de clics para sonido sutil
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest('button, a, input, select, textarea, [role="button"], .cal-day.marked, .archive-item, .player-playlist-item, .bg-option');
+    if (target) {
+      playClickSound();
+    }
+  }, true);
 }
 
 /* =============================================================
@@ -83,12 +93,53 @@ function escapeHtml(str) {
 }
 
 /* =============================================================
-   3. RENDERIZADO DEL FEED
+   3. RECUERDO DEL DÍA — entrada destacada aleatoria
+   ============================================================= */
+function renderFeaturedMemory() {
+  const container = document.getElementById('featuredMemory');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  if (allEntries.length === 0) return;
+
+  // Selección determinista basada en la fecha de hoy
+  const today = new Date();
+  const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+  const entry = allEntries[seed % allEntries.length];
+
+  const dateObj = new Date(entry.entry_date + 'T00:00:00');
+  const dateStr = dateObj.toLocaleDateString('es-ES', {
+    year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  const content = (entry.content || '').replace(/^Me acuerdo de\.\.\./i, '').trim();
+
+  const el = document.createElement('div');
+  el.className = 'featured-memory';
+  el.innerHTML = `
+    <div class="feat-header">
+      <span class="feat-star">★</span>
+      <span class="feat-label">Recuerdo del día</span>
+      <span class="feat-star">★</span>
+    </div>
+    <div class="feat-body">
+      <span class="feat-date">${dateStr}</span>
+      <p class="feat-text"><span class="entry-prefix">Me acuerdo de…</span> ${escapeHtml(content)}</p>
+    </div>
+  `;
+  container.appendChild(el);
+}
+
+/* =============================================================
+   4. RENDERIZADO DEL FEED
    ============================================================= */
 function renderFeed() {
   const feedInner = document.getElementById('feedInner');
   const feedEnd = document.getElementById('feedEnd');
   if (!feedInner) return;
+
+  renderFeaturedMemory();
 
   feedInner.innerHTML = '';
 
