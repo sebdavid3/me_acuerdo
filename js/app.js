@@ -1,57 +1,26 @@
 /**
- * App principal — Me acuerdo de...
- * Paso 2 (armazón visual) + Paso 3 (StPageFlip) + parte del 4/5
+ * App principal — Me acuerdo de... (Blog / Scroll infinito)
  */
 
-let pageFlip = null;
 let allEntries = [];
 let currentEntries = [];
-let wasMobile = false;
+let isEditMode = false;
 let playFlipSound = () => {};
 
 /* =============================================================
-   1. SONIDO procedural (Web Audio API)
+   1. SONIDO (Web Audio API — ahora suave al aparecer tarjeta)
    ============================================================= */
 function initSound() {
-  try {
-    playFlipSound = createFlipSound();
-  } catch(e) {
-    console.warn('Audio no disponible:', e);
-  }
+  try { playFlipSound = createFlipSound(); } catch(e) {}
 }
 
 /* =============================================================
-   2. RENDERIZADO DE PÁGINAS
+   2. RENDERIZADO DE ENTRADAS (tarjetas en feed)
    ============================================================= */
-function createCoverPage() {
-  const page = document.createElement('div');
-  page.className = 'page page-cover';
-  page.dataset.density = 'hard';
-  page.innerHTML = `
-    <div class="page-content" style="justify-content:center; align-items:center;">
-      <h1 class="book-title">Me acuerdo<br>de…</h1>
-      <p class="book-subtitle">un libro de recuerdos</p>
-    </div>
-  `;
-  return page;
-}
-
-function createBackCoverPage() {
-  const page = document.createElement('div');
-  page.className = 'page page-cover';
-  page.dataset.density = 'hard';
-  page.innerHTML = `
-    <div class="page-content" style="justify-content:center; align-items:center;">
-      <p class="book-subtitle" style="font-size:1.5rem;">~ fin ~</p>
-    </div>
-  `;
-  return page;
-}
-
-function createEntryPage(entry) {
-  const page = document.createElement('div');
-  page.className = 'page';
-  page.dataset.entryId = entry.id;
+function createEntryCard(entry) {
+  const card = document.createElement('article');
+  card.className = 'entry-card';
+  card.dataset.entryId = entry.id;
 
   const dateObj = new Date(entry.entry_date + 'T00:00:00');
   const dateStr = dateObj.toLocaleDateString('es-ES', {
@@ -60,183 +29,95 @@ function createEntryPage(entry) {
 
   const content = (entry.content || '').replace(/^Me acuerdo de\.\.\./i, '').trim();
 
-  page.innerHTML = `
-    <div class="page-content">
+  card.innerHTML = `
+    <div class="entry-card-content">
       <span class="entry-date">${dateStr}</span>
       <p class="entry-text"><span class="entry-prefix">Me acuerdo de…</span> ${escapeHtml(content)}</p>
-      ${isEditMode ? `
-        <div class="page-actions" style="margin-top:auto; padding-top:16px; display:flex; gap:8px; justify-content:flex-end;">
-          <button class="btn-secondary btn-edit" data-id="${entry.id}">Editar</button>
-          <button class="btn-secondary btn-delete" data-id="${entry.id}" style="color:#8B0000; border-color:rgba(139,0,0,0.3);">Borrar</button>
-        </div>
-      ` : ''}
-    </div>
-  `;
-  return page;
-}
-
-function createEmptyStatePage() {
-  const page = document.createElement('div');
-  page.className = 'page';
-  page.innerHTML = `
-    <div class="page-content" style="justify-content:center; align-items:center;">
-      <div class="empty-state">
-        <p class="empty-title">Todavía no hay recuerdos</p>
-        <p>Escribe el primero para empezar el libro.</p>
+      <div class="entry-actions ${isEditMode ? 'visible' : ''}">
+        <button class="btn-secondary btn-edit" data-id="${entry.id}">Editar</button>
+        <button class="btn-secondary btn-delete" data-id="${entry.id}" style="color:#8B0000; border-color:rgba(139,0,0,0.3);">Borrar</button>
       </div>
     </div>
   `;
-  return page;
+
+  // Animación de entrada suave
+  card.style.opacity = '0';
+  card.style.transform = 'translateY(20px)';
+  requestAnimationFrame(() => {
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    requestAnimationFrame(() => {
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    });
+  });
+
+  // Delegar clicks de editar/borrar
+  const actions = card.querySelector('.entry-actions');
+  if (actions) {
+    actions.addEventListener('click', (e) => {
+      if (e.target.classList.contains('btn-edit')) {
+        e.stopPropagation();
+        openEditDialog(entry);
+      }
+      if (e.target.classList.contains('btn-delete')) {
+        e.stopPropagation();
+        handleDelete(entry.id);
+      }
+    });
+  }
+
+  return card;
+}
+
+function createEmptyState() {
+  const div = document.createElement('div');
+  div.className = 'empty-state';
+  div.innerHTML = `
+    <p class="empty-title">Todavía no hay recuerdos</p>
+    <p>Escribe el primero para empezar el diario.</p>
+  `;
+  return div;
 }
 
 function escapeHtml(str) {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 /* =============================================================
-   3. STPAGEFLIP
+   3. RENDERIZADO DEL FEED
    ============================================================= */
-function buildPageElements() {
-  const pages = [];
-  pages.push(createCoverPage());
+function renderFeed() {
+  const feedInner = document.getElementById('feedInner');
+  const feedEnd = document.getElementById('feedEnd');
+  if (!feedInner) return;
+
+  feedInner.innerHTML = '';
 
   if (currentEntries.length === 0) {
-    pages.push(createEmptyStatePage());
-  } else {
-    currentEntries.forEach(entry => pages.push(createEntryPage(entry)));
-  }
-
-  pages.push(createBackCoverPage());
-  return pages;
-}
-
-function getBookDims() {
-  const isMobile = window.innerWidth <= 1024;
-  return {
-    isMobile,
-    pageWidth: isMobile ? 340 : 400,
-    pageHeight: isMobile ? 480 : 520,
-  };
-}
-
-function initBook() {
-  const container = document.getElementById('book');
-  if (!container) return;
-
-  const dims = getBookDims();
-  wasMobile = dims.isMobile;
-
-  // Limpiar contenedor
-  container.innerHTML = '';
-
-  // Inyectar páginas
-  const pages = buildPageElements();
-  pages.forEach(p => container.appendChild(p));
-
-  // Destruir instancia previa si existe
-  if (pageFlip) {
-    try { pageFlip.destroy(); } catch(e) {}
-    pageFlip = null;
-  }
-
-  // Ajustar tamaño del contenedor según orientación
-  if (dims.isMobile) {
-    container.style.width = dims.pageWidth + 'px';
-    container.style.height = dims.pageHeight + 'px';
-  } else {
-    container.style.width = (dims.pageWidth * 2) + 'px';
-    container.style.height = dims.pageHeight + 'px';
-  }
-
-  try {
-    pageFlip = new St.PageFlip(container, {
-      width: dims.pageWidth,
-      height: dims.pageHeight,
-      size: 'fixed',
-      maxShadowOpacity: 0.35,
-      showCover: true,
-      mobileScrollSupport: false,
-      usePortrait: dims.isMobile,
-      drawShadow: true,
-      flippingTime: 650,
-      startPage: 0,
-      autoSize: true,
-    });
-  } catch (err) {
-    console.error('Error inicializando StPageFlip:', err);
+    feedInner.appendChild(createEmptyState());
+    feedEnd.style.display = 'none';
     return;
   }
 
-  // Esperar a que PageFlip esté listo antes de cargar páginas
-  pageFlip.on('init', () => {
-    pageFlip.loadFromHTML(container.querySelectorAll('.page'));
+  currentEntries.forEach((entry, idx) => {
+    setTimeout(() => {
+      feedInner.appendChild(createEntryCard(entry));
+    }, idx * 80); // Stagger reveal
   });
 
-  // Sonido al voltear
-  pageFlip.on('flip', () => playFlipSound());
-
-  updateSpineShadow();
-}
-
-function refreshBook() {
-  // Si la orientación cambió, reinicializar completamente
-  const dims = getBookDims();
-  if (dims.isMobile !== wasMobile) {
-    initBook();
-    return;
-  }
-
-  // Misma orientación: usar updateFromHTML para conservar estado
-  const container = document.getElementById('book');
-  if (!container || !pageFlip) return;
-
-  container.innerHTML = '';
-  const pages = buildPageElements();
-  pages.forEach(p => container.appendChild(p));
-
-  try {
-    if (typeof pageFlip.updateFromHTML === 'function') {
-      pageFlip.updateFromHTML(container.querySelectorAll('.page'));
-    } else if (typeof pageFlip.updateFromHtml === 'function') {
-      pageFlip.updateFromHtml(container.querySelectorAll('.page'));
-    } else {
-      initBook();
-    }
-  } catch (e) {
-    console.warn('updateFromHTML falló, reinicializando:', e);
-    initBook();
-  }
-}
-
-function updateSpineShadow() {
-  const spine = document.querySelector('.spine-shadow');
-  if (!spine) return;
-  spine.style.display = window.innerWidth <= 1024 ? 'none' : 'block';
+  feedEnd.style.display = 'flex';
 }
 
 /* =============================================================
-   4. NAVEGACIÓN
+   4. SCROLL INFINITO (placeholder para carga progresiva)
    ============================================================= */
-function prevPage() {
-  if (pageFlip && typeof pageFlip.flipPrev === 'function') pageFlip.flipPrev();
-}
-function nextPage() {
-  if (pageFlip && typeof pageFlip.flipNext === 'function') pageFlip.flipNext();
-}
-function jumpToPage(index) {
-  if (!pageFlip) return;
-  const target = index + 1;
-  const total = typeof pageFlip.getPageCount === 'function' ? pageFlip.getPageCount() : 999;
-  if (target >= 0 && target < total && typeof pageFlip.turnToPage === 'function') {
-    pageFlip.turnToPage(target);
-  }
+function initInfiniteScroll() {
+  // Por ahora todas las entries se cargan de golpe.
+  // Si en el futuro hay miles, implementar carga por lotes aquí.
 }
 
 /* =============================================================
-   5. FILTROS (coherentes entre sí)
+   5. FILTROS
    ============================================================= */
 async function applyFilter(filter) {
   if (!filter) {
@@ -249,32 +130,87 @@ async function applyFilter(filter) {
     const d = filter.date;
     currentEntries = allEntries.filter(e => e.entry_date === d);
   }
-  refreshBook();
+  renderFeed();
 }
 
 /* =============================================================
-   6. PANEL LATERAL (cajón en móvil)
+   6. MODO EDICIÓN
    ============================================================= */
-function initSidePanel() {
-  const toggle = document.getElementById('ribbonToggle');
-  const panel = document.getElementById('sidePanel');
-  if (!toggle || !panel) return;
+function updateEditModeUI() {
+  const hint = document.getElementById('authHint');
+  const fab = document.getElementById('fabWrite');
+  const pwField = document.getElementById('passwordField');
+  const unlockBtn = document.getElementById('unlockBtn');
 
-  toggle.addEventListener('click', () => panel.classList.toggle('open'));
+  if (isEditMode) {
+    hint.textContent = 'Modo escritura ✓';
+    hint.style.color = 'var(--c-tertiary)';
+    fab.classList.add('visible');
+    pwField.placeholder = 'bloquear...';
+    unlockBtn.textContent = '×';
+    unlockBtn.setAttribute('aria-label', 'Bloquear');
+  } else {
+    hint.textContent = 'Modo lectura';
+    hint.style.color = 'var(--c-secondary)';
+    fab.classList.remove('visible');
+    pwField.value = '';
+    pwField.placeholder = 'escribe la clave...';
+    unlockBtn.textContent = '→';
+    unlockBtn.setAttribute('aria-label', 'Desbloquear');
+  }
 
-  document.addEventListener('click', (e) => {
-    if (window.innerWidth > 1024) return;
-    if (!panel.contains(e.target) && !toggle.contains(e.target)) {
-      panel.classList.remove('open');
-    }
+  // Mostrar/ocultar botones de editar en tarjetas existentes
+  document.querySelectorAll('.entry-actions').forEach(el => {
+    el.classList.toggle('visible', isEditMode);
   });
 }
 
+function toggleEditMode(enable) {
+  isEditMode = enable;
+  updateEditModeUI();
+}
+
 /* =============================================================
-   7. MODO EDICIÓN — controles en páginas
+   7. AUTENTICACIÓN
    ============================================================= */
-function updatePageEditControls() {
-  refreshBook();
+let storedPassword = null;
+
+async function loadPassword() {
+  storedPassword = await fetchSettingsPassword();
+  if (!storedPassword) storedPassword = CONFIG.PASSWORD;
+}
+
+function handleAuth() {
+  const field = document.getElementById('passwordField');
+  const val = field.value.trim();
+
+  if (isEditMode) {
+    toggleEditMode(false);
+    return;
+  }
+
+  if (val === storedPassword) {
+    toggleEditMode(true);
+    field.value = '';
+  } else {
+    const hint = document.getElementById('authHint');
+    hint.textContent = 'la contraseña no coincide';
+    hint.style.color = '#8B0000';
+    setTimeout(() => {
+      if (!isEditMode) {
+        hint.textContent = 'Modo lectura';
+        hint.style.color = 'var(--c-secondary)';
+      }
+    }, 2000);
+  }
+}
+
+function initAuth() {
+  loadPassword();
+  document.getElementById('unlockBtn').addEventListener('click', handleAuth);
+  document.getElementById('passwordField').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleAuth();
+  });
 }
 
 /* =============================================================
@@ -292,6 +228,12 @@ function initWriteForm() {
   dateInput.valueAsDate = new Date();
 
   fab.addEventListener('click', () => {
+    // Reset para nuevo recuerdo
+    dialog.dataset.mode = 'create';
+    dialog.dataset.editId = '';
+    document.querySelector('.write-title').textContent = 'Nuevo recuerdo';
+    dateInput.valueAsDate = new Date();
+    contentInput.value = '';
     dialog.showModal();
     contentInput.focus();
   });
@@ -307,11 +249,37 @@ function initWriteForm() {
       ? content
       : `Me acuerdo de... ${content}`;
 
-    await insertEntry(fullContent, date);
+    const mode = dialog.dataset.mode;
+    if (mode === 'edit' && dialog.dataset.editId) {
+      await updateEntry(dialog.dataset.editId, { content: fullContent, entry_date: date });
+    } else {
+      await insertEntry(fullContent, date);
+    }
+
     dialog.close();
     contentInput.value = '';
     await loadEntries();
   });
+}
+
+function openEditDialog(entry) {
+  const dialog = document.getElementById('writeDialog');
+  const dateInput = document.getElementById('entryDate');
+  const contentInput = document.getElementById('entryContent');
+
+  dialog.dataset.mode = 'edit';
+  dialog.dataset.editId = entry.id;
+  document.querySelector('.write-title').textContent = 'Editar recuerdo';
+  dateInput.value = entry.entry_date;
+  contentInput.value = entry.content;
+  dialog.showModal();
+  contentInput.focus();
+}
+
+async function handleDelete(id) {
+  if (!confirm('¿Borrar este recuerdo?')) return;
+  await deleteEntry(id);
+  await loadEntries();
 }
 
 /* =============================================================
@@ -322,34 +290,22 @@ async function loadEntries() {
   currentEntries = [...allEntries];
   buildArchive(allEntries);
   renderCalendar(allEntries);
-  initBook();
+  renderFeed();
+  updateEditModeUI();
 }
 
 /* =============================================================
    10. EVENT LISTENERS GLOBALES
    ============================================================= */
 function initEvents() {
-  document.getElementById('prevPage').addEventListener('click', prevPage);
-  document.getElementById('nextPage').addEventListener('click', nextPage);
-
   window.addEventListener('refresh-calendar', () => renderCalendar(allEntries));
   window.addEventListener('jump-to-date', (e) => {
-    const idx = currentEntries.findIndex(en => en.entry_date === e.detail);
-    if (idx !== -1) jumpToPage(idx);
+    // Scroll al recuerdo de esa fecha
+    const el = document.querySelector(`[data-entry-id]`);
+    // Para un blog, saltar a fecha = filtrar por esa fecha
+    applyFilter({ type: 'date', date: e.detail });
   });
   window.addEventListener('apply-filter', (e) => applyFilter(e.detail));
-
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      const dims = getBookDims();
-      if (dims.isMobile !== wasMobile) {
-        initBook();
-      }
-      updateSpineShadow();
-    }, 250);
-  });
 }
 
 /* =============================================================
@@ -360,10 +316,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initAuth();
   initCalendar();
   initArchive();
-  initSidePanel();
   initWriteForm();
   initEvents();
   initSound();
+  initInfiniteScroll();
 
   if (CONFIG.SUPABASE_ANON_KEY === 'REEMPLAZAR_CON_ANON_KEY') {
     loadDemoData();
@@ -412,5 +368,5 @@ function loadDemoData() {
   currentEntries = [...demo];
   buildArchive(demo);
   renderCalendar(demo);
-  initBook();
+  renderFeed();
 }

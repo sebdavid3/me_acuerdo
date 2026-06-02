@@ -5,13 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Me acuerdo de...</title>
 
-  <!-- Google Fonts: Playfair Display, Special Elite, EB Garamond, Caveat -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Playfair+Display:wght@400;700&family=Special+Elite&display=swap" rel="stylesheet">
-
-  <!-- StPageFlip (page-flip) -->
-  <script src="https://unpkg.com/page-flip@latest/dist/js/page-flip.browser.min.js"></script>
 
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -20,96 +17,90 @@
 </head>
 <body>
 
-  <!-- Fondo con textura de mesa / papel envejecido -->
+  <!-- Fondo con textura -->
   <div class="ambient-bg"></div>
 
   <!-- ============================================= -->
-  <!-- LIBRO (centro de la pantalla)                -->
+  <!-- HEADER / PORTADA                              -->
   <!-- ============================================= -->
-  <main class="book-stage">
-    <div id="book" class="book-container">
-      <!-- Las páginas se inyectan desde app.js -->
+  <header class="site-header">
+    <div class="header-inner">
+      <h1 class="site-title">Me acuerdo de…</h1>
+      <p class="site-subtitle">un libro de recuerdos</p>
+      <div class="header-divider"></div>
     </div>
-
-    <!-- Sombras de encuadernación (lomo) -->
-    <div class="spine-shadow"></div>
-  </main>
+  </header>
 
   <!-- ============================================= -->
-  <!-- PANEL DERECHO (fijo en desktop, cajón en móvil) -->
+  <!-- CONTENIDO PRINCIPAL: feed + sidebar           -->
   <!-- ============================================= -->
-  <!-- Tirador / cinta en móvil (fuera del panel para que sea visible) -->
-  <button class="ribbon-toggle" id="ribbonToggle" aria-label="Abrir panel">
-    <span class="ribbon-tail"></span>
-    <span class="ribbon-label">índice</span>
-  </button>
+  <div class="main-layout">
 
-  <aside class="side-panel" id="sidePanel">
-    <div class="panel-content" id="panelContent">
-      <!-- F1 · Desbloqueo por contraseña -->
-      <section class="panel-section auth-section">
-        <label class="auth-label" for="passwordField">Modo escritura</label>
-        <div class="password-wrap">
-          <input
-            type="password"
-            id="passwordField"
-            class="password-field"
-            placeholder="escribe la clave..."
-            autocomplete="off"
-          />
-          <button id="unlockBtn" class="btn-icon" aria-label="Desbloquear">→</button>
-        </div>
-        <p class="auth-hint" id="authHint">Modo lectura</p>
-      </section>
+    <!-- Feed de recuerdos (scroll infinito) -->
+    <main class="feed" id="feed">
+      <div class="feed-inner" id="feedInner">
+        <!-- Inyectado desde app.js -->
+      </div>
+      <div class="feed-end" id="feedEnd">
+        <span class="end-line"></span>
+        <p class="end-text">fin del diario</p>
+        <span class="end-line"></span>
+      </div>
+    </main>
 
-      <!-- F5 · Calendario -->
-      <section class="panel-section calendar-section">
-        <h2 class="panel-title">Calendario</h2>
-        <div class="calendar-nav">
-          <button class="cal-btn" id="prevMonth">‹</button>
-          <span class="cal-month-name" id="calMonthName">Junio 2026</span>
-          <button class="cal-btn" id="nextMonth">›</button>
-        </div>
-        <div class="calendar-grid" id="calendarGrid">
-          <!-- Inyectado desde calendar.js -->
-        </div>
-      </section>
+    <!-- Sidebar fijo (sticky) -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-sticky">
 
-      <!-- F6 · Archivo por meses -->
-      <section class="panel-section archive-section">
-        <h2 class="panel-title">Archivo</h2>
-        <ul class="archive-list" id="archiveList">
-          <!-- Inyectado desde archive.js -->
-        </ul>
-        <button class="clear-filter" id="clearFilter">Ver todos los recuerdos</button>
-      </section>
+        <!-- F1 · Desbloqueo -->
+        <section class="panel-section auth-section">
+          <label class="auth-label" for="passwordField">Modo escritura</label>
+          <div class="password-wrap">
+            <input type="password" id="passwordField" class="password-field" placeholder="escribe la clave..." autocomplete="off"/>
+            <button id="unlockBtn" class="btn-icon" aria-label="Desbloquear">→</button>
+          </div>
+          <p class="auth-hint" id="authHint">Modo lectura</p>
+        </section>
 
-      <!-- F7 · Búsqueda -->
-      <section class="panel-section search-section">
-        <h2 class="panel-title">Buscar</h2>
-        <div class="search-wrap">
-          <input
-            type="text"
-            id="searchField"
-            class="search-field"
-            placeholder="una palabra, un nombre..."
-          />
-          <button id="searchBtn" class="btn-icon" aria-label="Buscar">⌕</button>
-        </div>
-      </section>
-    </div>
-  </aside>
+        <!-- F5 · Calendario -->
+        <section class="panel-section calendar-section">
+          <h2 class="panel-title">Calendario</h2>
+          <div class="calendar-nav">
+            <button class="cal-btn" id="prevMonth">‹</button>
+            <span class="cal-month-name" id="calMonthName">Junio 2026</span>
+            <button class="cal-btn" id="nextMonth">›</button>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </section>
+
+        <!-- F6 · Archivo -->
+        <section class="panel-section archive-section">
+          <h2 class="panel-title">Archivo</h2>
+          <ul class="archive-list" id="archiveList"></ul>
+          <button class="clear-filter" id="clearFilter">Ver todos los recuerdos</button>
+        </section>
+
+        <!-- F7 · Búsqueda -->
+        <section class="panel-section search-section">
+          <h2 class="panel-title">Buscar</h2>
+          <div class="search-wrap">
+            <input type="text" id="searchField" class="search-field" placeholder="una palabra, un nombre..."/>
+            <button id="searchBtn" class="btn-icon" aria-label="Buscar">⌕</button>
+          </div>
+        </section>
+
+      </div>
+    </aside>
+
+  </div>
 
   <!-- ============================================= -->
-  <!-- CONTROLES DE NAVEGACIÓN DEL LIBRO            -->
+  <!-- BOTÓN ESCRIBIR (modo edición)                 -->
   <!-- ============================================= -->
-  <nav class="book-nav" aria-label="Navegación del libro">
-    <button class="nav-btn" id="prevPage">‹ anterior</button>
-    <button class="nav-btn" id="nextPage">siguiente ›</button>
-  </nav>
+  <button class="fab-write" id="fabWrite" aria-label="Escribir recuerdo">+</button>
 
   <!-- ============================================= -->
-  <!-- FORMULARIO DE ESCRITURA (solo edición)       -->
+  <!-- FORMULARIO DE ESCRITURA                       -->
   <!-- ============================================= -->
   <dialog class="write-dialog" id="writeDialog">
     <form method="dialog" class="write-form">
@@ -124,9 +115,6 @@
       </div>
     </form>
   </dialog>
-
-  <!-- Botón flotante de "escribir" (solo visible en modo edición) -->
-  <button class="fab-write" id="fabWrite" aria-label="Escribir recuerdo">+</button>
 
   <!-- Scripts -->
   <script src="js/config.js"></script>
