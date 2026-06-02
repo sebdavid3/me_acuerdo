@@ -3,31 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Me acuerdo de...</title>
+  <title>Me acuerdo</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Playfair+Display:wght@400;700&family=Special+Elite&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=VT323&display=swap" rel="stylesheet">
 
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
+  <!-- Preload GIFs para evitar que aparezcan de golpe -->
+  <link rel="preload" as="image" href="assets/pajaros_gatos/bird 2.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/bird 25.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/bird 46.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/bird 51.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/bird 76.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/bird 104.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/bird 107.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/bird 217.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/bird 218.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/bird 256.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/bird 333.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/bird 398.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/bird 524.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/cat 26.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/cat 292.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/cat 490.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/cat 553.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/cat 728.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/cat 983.gif">
+  <link rel="preload" as="image" href="assets/pajaros_gatos/cat 1034.gif">
 
-  <!-- Fondo con textura -->
-  <div class="ambient-bg"></div>
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Cursor personalizado - Flurry Of Hearts -->
+  <link rel="stylesheet" href="https://cdn.cursors-4u.net/cursors/animated/hol136-24a5cf66-32.css">
+</head>
+<body class="bg-pattern357">
+
+  <!-- Fondo animado -->
+  <div class="ambient-bg" id="ambientBg"></div>
+
+  <!-- Columnas de GIFs con scroll infinito estilo Neocities -->
+  <div class="gif-columns">
+    <div class="gif-column gif-column-left">
+      <div class="gif-scroll">
+        <!-- 10 unique: bird→cat→bird→cat... duplicado para loop seamless (20 img) -->
+        <img src="assets/pajaros_gatos/bird 2.gif" alt="">
+        <img src="assets/pajaros_gatos/cat 26.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 25.gif" alt="">
+        <img src="assets/pajaros_gatos/cat 292.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 46.gif" alt="">
+        <img src="assets/pajaros_gatos/cat 490.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 51.gif" alt="">
+        <img src="assets/pajaros_gatos/cat 553.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 76.gif" alt="">
+        <img src="assets/pajaros_gatos/cat 728.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 2.gif" alt="">
+        <img src="assets/pajaros_gatos/cat 26.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 25.gif" alt="">
+        <img src="assets/pajaros_gatos/cat 292.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 46.gif" alt="">
+        <img src="assets/pajaros_gatos/cat 490.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 51.gif" alt="">
+        <img src="assets/pajaros_gatos/cat 553.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 76.gif" alt="">
+        <img src="assets/pajaros_gatos/cat 728.gif" alt="">
+      </div>
+    </div>
+    <div class="gif-column gif-column-right">
+      <div class="gif-scroll">
+        <!-- 10 unique: cat→bird→cat→bird... duplicado para loop seamless (20 img) -->
+        <img src="assets/pajaros_gatos/cat 983.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 104.gif" alt="">
+        <img src="assets/pajaros_gatos/cat 1034.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 107.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 217.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 218.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 256.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 333.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 398.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 524.gif" alt="">
+        <img src="assets/pajaros_gatos/cat 983.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 104.gif" alt="">
+        <img src="assets/pajaros_gatos/cat 1034.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 107.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 217.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 218.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 256.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 333.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 398.gif" alt="">
+        <img src="assets/pajaros_gatos/bird 524.gif" alt="">
+      </div>
+    </div>
+  </div>
 
   <!-- ============================================= -->
   <!-- HEADER / PORTADA                              -->
   <!-- ============================================= -->
   <header class="site-header">
     <div class="header-inner">
-      <h1 class="site-title">Me acuerdo de…</h1>
-      <p class="site-subtitle">un libro de recuerdos</p>
-      <div class="header-divider"></div>
+      <div class="header-banner">
+        <span class="banner-star">✦</span>
+        <span class="banner-star">✧</span>
+        <span class="banner-star">⋆</span>
+        <span class="banner-star">✦</span>
+        <span class="banner-star">✧</span>
+      </div>
+      <h1 class="site-title">Me acuerdo</h1>
+      <div class="header-divider">
+        <span class="divider-ornament">❧</span>
+      </div>
+      <div class="header-banner header-banner-bottom">
+        <span class="banner-star">✦</span>
+        <span class="banner-star">✧</span>
+        <span class="banner-star">⋆</span>
+        <span class="banner-star">✦</span>
+        <span class="banner-star">✧</span>
+      </div>
     </div>
   </header>
 
@@ -43,7 +137,11 @@
       </div>
       <div class="feed-end" id="feedEnd">
         <span class="end-line"></span>
+        <span class="end-ornament">✦</span>
+        <span class="end-line"></span>
         <p class="end-text">fin del diario</p>
+        <span class="end-line"></span>
+        <span class="end-ornament">✦</span>
         <span class="end-line"></span>
       </div>
     </main>
@@ -54,16 +152,16 @@
 
         <!-- F1 · Desbloqueo -->
         <section class="panel-section auth-section">
-          <label class="auth-label" for="passwordField">Modo escritura</label>
+          <div class="panel-ornament">❀</div>
           <div class="password-wrap">
-            <input type="password" id="passwordField" class="password-field" placeholder="escribe la clave..." autocomplete="off"/>
-            <button id="unlockBtn" class="btn-icon" aria-label="Desbloquear">→</button>
+            <input type="password" id="passwordField" class="password-field" placeholder="" autocomplete="off"/>
+            <button id="unlockBtn" class="btn-icon-gif" aria-label="Desbloquear"><img src="assets/buttons/arrow_right.gif" alt="→" class="btn-gif-img"></button>
           </div>
-          <p class="auth-hint" id="authHint">Modo lectura</p>
         </section>
 
         <!-- F5 · Calendario -->
         <section class="panel-section calendar-section">
+          <div class="panel-ornament">❀</div>
           <h2 class="panel-title">Calendario</h2>
           <div class="calendar-nav">
             <button class="cal-btn" id="prevMonth">‹</button>
@@ -75,17 +173,74 @@
 
         <!-- F6 · Archivo -->
         <section class="panel-section archive-section">
+          <div class="panel-ornament">❀</div>
           <h2 class="panel-title">Archivo</h2>
           <ul class="archive-list" id="archiveList"></ul>
-          <button class="clear-filter" id="clearFilter">Ver todos los recuerdos</button>
+          <button class="clear-filter" id="clearFilter">✿ Ver todos los recuerdos</button>
         </section>
 
         <!-- F7 · Búsqueda -->
         <section class="panel-section search-section">
+          <div class="panel-ornament">❀</div>
           <h2 class="panel-title">Buscar</h2>
           <div class="search-wrap">
             <input type="text" id="searchField" class="search-field" placeholder="una palabra, un nombre..."/>
-            <button id="searchBtn" class="btn-icon" aria-label="Buscar">⌕</button>
+            <button id="searchBtn" class="btn-icon-gif" aria-label="Buscar"><img src="assets/buttons/Magnifying_glass.gif" alt="⌕" class="btn-gif-img"></button>
+          </div>
+        </section>
+
+        <!-- ♫ Reproductor de música -->
+        <section class="panel-section player-section">
+          <div class="panel-ornament">❀</div>
+          <h2 class="panel-title">Música</h2>
+          <div class="player-controls">
+            <button class="player-btn" id="prevBtn" title="Anterior">
+              <img src="assets/buttons/Pixel Buttons/Music_Prev_Idle.png" alt="◀◀" class="player-btn-img">
+            </button>
+            <button class="player-btn player-play-btn" id="playBtn" title="Reproducir">
+              <img src="assets/buttons/Pixel Buttons/Play_Idle.png" alt="▶" id="playBtnImg" class="player-btn-img">
+            </button>
+            <button class="player-btn" id="nextBtn" title="Siguiente">
+              <img src="assets/buttons/Pixel Buttons/Music_Next_Idle.png" alt="▶▶" class="player-btn-img">
+            </button>
+          </div>
+          <div class="player-track-info">
+            <span class="player-track-name" id="trackName"></span>
+            <span class="player-track-game" id="trackGame"></span>
+          </div>
+          <ul class="player-playlist" id="playlistItems"></ul>
+          <audio id="playerAudio" preload="metadata"></audio>
+        </section>
+
+        <!-- Contador de visitas -->
+        <section class="panel-section visitor-section">
+          <div class="visitor-counter">
+            <span class="visitor-ornament">★</span>
+            <span class="visitor-label">visitas</span>
+            <span class="visitor-number" id="visitorCount">0000</span>
+            <span class="visitor-ornament">★</span>
+          </div>
+        </section>
+
+        <!-- Selector de fondo (al final, no es lo principal) -->
+        <section class="panel-section bg-selector-section collapsed">
+          <h2 class="panel-title bg-selector-toggle">✧ Fondo</h2>
+          <div class="bg-options">
+            <button class="bg-option active" data-bg="pattern357" title="Pattern 357">
+              <img src="assets/fondos/pattern 357.gif" alt="Pattern 357" class="bg-preview">
+            </button>
+            <button class="bg-option" data-bg="pattern362" title="Pattern 362">
+              <img src="assets/fondos/pattern 362.gif" alt="Pattern 362" class="bg-preview">
+            </button>
+            <button class="bg-option" data-bg="flowers17" title="Flowers 17">
+              <img src="assets/fondos/flowers 17.gif" alt="Flowers 17" class="bg-preview">
+            </button>
+            <button class="bg-option" data-bg="flowers27" title="Flowers 27">
+              <img src="assets/fondos/flowers 27.gif" alt="Flowers 27" class="bg-preview">
+            </button>
+            <button class="bg-option" data-bg="none" title="Sin fondo">
+              <span class="bg-none-preview">sin</span>
+            </button>
           </div>
         </section>
 
@@ -97,24 +252,38 @@
   <!-- ============================================= -->
   <!-- BOTÓN ESCRIBIR (modo edición)                 -->
   <!-- ============================================= -->
-  <button class="fab-write" id="fabWrite" aria-label="Escribir recuerdo">+</button>
+  <button class="fab-write" id="fabWrite" aria-label="Escribir recuerdo">
+    <span class="fab-sparkle">✦</span>
+    <span class="fab-plus">+</span>
+    <span class="fab-sparkle">✧</span>
+  </button>
 
   <!-- ============================================= -->
   <!-- FORMULARIO DE ESCRITURA                       -->
   <!-- ============================================= -->
   <dialog class="write-dialog" id="writeDialog">
     <form method="dialog" class="write-form">
-      <h2 class="write-title">Nuevo recuerdo</h2>
+      <h2 class="write-title">✎ Nuevo recuerdo</h2>
       <label class="write-label" for="entryDate">Fecha del recuerdo</label>
       <input type="date" id="entryDate" class="write-date" />
       <label class="write-label" for="entryContent">Me acuerdo de...</label>
       <textarea id="entryContent" class="write-textarea" rows="6" placeholder="..."></textarea>
       <div class="write-actions">
-        <button type="button" class="btn-primary" id="saveEntry">Guardar</button>
+        <button type="button" class="btn-primary" id="saveEntry">Guardar ✦</button>
         <button type="button" class="btn-secondary" id="cancelWrite">Cancelar</button>
       </div>
     </form>
   </dialog>
+
+  <!-- Barra inferior Now Playing -->
+  <div class="now-playing-bar" id="nowPlayingBar">
+    <marquee class="now-playing-marquee" id="playerMarquee" scrollamount="3" behavior="scroll" direction="left">♫ Now Playing: Theme of Love</marquee>
+    <span class="now-playing-days">
+      <span class="npd-ornament">✦</span>
+      <span class="npd-number" id="daysCount">000</span>
+      <span class="npd-ornament">✦</span>
+    </span>
+  </div>
 
   <!-- Scripts -->
   <script src="js/config.js"></script>
@@ -123,6 +292,42 @@
   <script src="js/calendar.js"></script>
   <script src="js/archive.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/player.js"></script>
   <script src="js/app.js"></script>
+
+  <script>
+    // Contador de días desde el 25 de mayo de 2024
+    (function() {
+      const start = new Date(2024, 4, 25);
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const diff = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+      document.getElementById('daysCount').textContent = String(diff).padStart(3, '0');
+    })();
+
+    // Selector de fondos (colapsable)
+    document.addEventListener('DOMContentLoaded', function() {
+      const bgButtons = document.querySelectorAll('.bg-option');
+      const body = document.body;
+
+      bgButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          bgButtons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+
+          const bg = this.dataset.bg;
+          body.classList.remove('bg-pattern357', 'bg-pattern362', 'bg-flowers17', 'bg-flowers27');
+          if (bg !== 'none') {
+            body.classList.add('bg-' + bg);
+          }
+        });
+      });
+
+      // Toggle colapso del selector de fondos
+      document.querySelector('.bg-selector-toggle').addEventListener('click', function() {
+        this.closest('.bg-selector-section').classList.toggle('collapsed');
+      });
+    });
+  </script>
 </body>
 </html>

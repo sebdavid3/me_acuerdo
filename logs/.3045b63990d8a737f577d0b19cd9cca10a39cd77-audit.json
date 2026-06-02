@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Users\\desar\\OneDrive\\Documents\\me_acuerdo\\logs\\.3045b63990d8a737f577d0b19cd9cca10a39cd77-audit.json",
+    "files": [
+        {
+            "date": 1780409372624,
+            "name": "C:\\Users\\desar\\OneDrive\\Documents\\me_acuerdo\\logs\\mcp-puppeteer-2026-06-02.log",
+            "hash": "37ae80207fad31ec4080e2b7729eb15e52dd9563e8967dbf157b962a37526aec"
+        }
+    ],
+    "hashType": "sha256"
+}
