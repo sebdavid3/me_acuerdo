@@ -31,7 +31,6 @@
     trackName.textContent = t.name;
     trackGame.textContent = t.game;
     marquee.textContent = '♫ Now Playing: ' + t.name + ' — ' + t.game;
-    document.title = '♫ ' + t.name + ' — Me acuerdo';
     highlightActive();
   }
 
