@@ -15,22 +15,25 @@ async function loadPassword() {
 
 function toggleEditMode(enable) {
   isEditMode = enable;
-  const fab = document.getElementById('fabWrite');
   const pwField = document.getElementById('passwordField');
   const unlockBtn = document.getElementById('unlockBtn');
   const unlockImg = unlockBtn.querySelector('img');
+  const writeLink = document.getElementById('writeLink');
+  const feedWriteBtn = document.getElementById('feedWriteBtn');
 
   if (isEditMode) {
-    fab.classList.add('visible');
     pwField.placeholder = 'bloquear...';
     if (unlockImg) unlockImg.src = 'assets/buttons/Pixel Buttons/Cross_Idle.png';
     unlockBtn.setAttribute('aria-label', 'Bloquear');
+    writeLink.classList.add('visible');
+    feedWriteBtn.classList.add('visible');
   } else {
-    fab.classList.remove('visible');
     pwField.value = '';
     pwField.placeholder = '';
     if (unlockImg) unlockImg.src = 'assets/buttons/arrow_right.gif';
     unlockBtn.setAttribute('aria-label', 'Desbloquear');
+    writeLink.classList.remove('visible');
+    feedWriteBtn.classList.remove('visible');
   }
 
   // Actualizar visibilidad de botones de editar/borrar en páginas

@@ -143,27 +143,31 @@ function updatePageEditControls() {
 /* =============================================================
    8. FORMULARIO DE ESCRITURA
    ============================================================= */
+function openNewEntryDialog() {
+  const dialog = document.getElementById('writeDialog');
+  const dateInput = document.getElementById('entryDate');
+  const contentInput = document.getElementById('entryContent');
+  dialog.dataset.mode = 'create';
+  dialog.dataset.editId = '';
+  document.querySelector('.write-title').textContent = 'Nuevo recuerdo';
+  dateInput.valueAsDate = new Date();
+  contentInput.value = '';
+  dialog.showModal();
+  contentInput.focus();
+}
+
 function initWriteForm() {
   const dialog = document.getElementById('writeDialog');
-  const fab = document.getElementById('fabWrite');
   const saveBtn = document.getElementById('saveEntry');
   const cancelBtn = document.getElementById('cancelWrite');
   const dateInput = document.getElementById('entryDate');
   const contentInput = document.getElementById('entryContent');
-  if (!dialog || !fab) return;
+  if (!dialog) return;
 
   dateInput.valueAsDate = new Date();
 
-  fab.addEventListener('click', () => {
-    // Reset para nuevo recuerdo
-    dialog.dataset.mode = 'create';
-    dialog.dataset.editId = '';
-    document.querySelector('.write-title').textContent = 'Nuevo recuerdo';
-    dateInput.valueAsDate = new Date();
-    contentInput.value = '';
-    dialog.showModal();
-    contentInput.focus();
-  });
+  document.getElementById('writeLink').addEventListener('click', openNewEntryDialog);
+  document.getElementById('feedWriteBtn').addEventListener('click', openNewEntryDialog);
 
   cancelBtn.addEventListener('click', () => dialog.close());
 
