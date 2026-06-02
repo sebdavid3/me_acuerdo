@@ -15,25 +15,21 @@ async function loadPassword() {
 
 function toggleEditMode(enable) {
   isEditMode = enable;
-  const hint = document.getElementById('authHint');
   const fab = document.getElementById('fabWrite');
   const pwField = document.getElementById('passwordField');
   const unlockBtn = document.getElementById('unlockBtn');
+  const unlockImg = unlockBtn.querySelector('img');
 
   if (isEditMode) {
-    hint.textContent = 'Modo escritura ✓';
-    hint.style.color = 'var(--c-tertiary)';
     fab.classList.add('visible');
     pwField.placeholder = 'bloquear...';
-    unlockBtn.textContent = '×';
+    if (unlockImg) unlockImg.src = 'assets/buttons/Pixel Buttons/Cross_Idle.png';
     unlockBtn.setAttribute('aria-label', 'Bloquear');
   } else {
-    hint.textContent = 'Modo lectura';
-    hint.style.color = 'var(--c-secondary)';
     fab.classList.remove('visible');
     pwField.value = '';
-    pwField.placeholder = 'escribe la clave...';
-    unlockBtn.textContent = '→';
+    pwField.placeholder = '';
+    if (unlockImg) unlockImg.src = 'assets/buttons/arrow_right.gif';
     unlockBtn.setAttribute('aria-label', 'Desbloquear');
   }
 
@@ -53,16 +49,6 @@ function handleAuth() {
   if (val === storedPassword) {
     toggleEditMode(true);
     field.value = '';
-  } else {
-    const hint = document.getElementById('authHint');
-    hint.textContent = 'la contraseña no coincide';
-    hint.style.color = '#8B0000';
-    setTimeout(() => {
-      if (!isEditMode) {
-        hint.textContent = 'Modo lectura';
-        hint.style.color = 'var(--c-secondary)';
-      }
-    }, 2000);
   }
 }
 
