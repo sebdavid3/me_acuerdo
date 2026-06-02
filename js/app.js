@@ -4,11 +4,10 @@
 
 let allEntries = [];
 let currentEntries = [];
-let isEditMode = false;
 let playFlipSound = () => {};
 
 /* =============================================================
-   1. SONIDO (Web Audio API — ahora suave al aparecer tarjeta)
+   1. SONIDO (Web Audio API)
    ============================================================= */
 function initSound() {
   try { playFlipSound = createFlipSound(); } catch(e) {}
@@ -99,10 +98,8 @@ function renderFeed() {
     return;
   }
 
-  currentEntries.forEach((entry, idx) => {
-    setTimeout(() => {
-      feedInner.appendChild(createEntryCard(entry));
-    }, idx * 80); // Stagger reveal
+  currentEntries.forEach((entry) => {
+    feedInner.appendChild(createEntryCard(entry));
   });
 
   feedEnd.style.display = 'flex';
@@ -134,82 +131,12 @@ async function applyFilter(filter) {
 }
 
 /* =============================================================
-   6. MODO EDICIÓN
+   6. MODO EDICIÓN — sincronizar UI de tarjetas
    ============================================================= */
-function updateEditModeUI() {
-  const hint = document.getElementById('authHint');
-  const fab = document.getElementById('fabWrite');
-  const pwField = document.getElementById('passwordField');
-  const unlockBtn = document.getElementById('unlockBtn');
-
-  if (isEditMode) {
-    hint.textContent = 'Modo escritura ✓';
-    hint.style.color = 'var(--c-tertiary)';
-    fab.classList.add('visible');
-    pwField.placeholder = 'bloquear...';
-    unlockBtn.textContent = '×';
-    unlockBtn.setAttribute('aria-label', 'Bloquear');
-  } else {
-    hint.textContent = 'Modo lectura';
-    hint.style.color = 'var(--c-secondary)';
-    fab.classList.remove('visible');
-    pwField.value = '';
-    pwField.placeholder = 'escribe la clave...';
-    unlockBtn.textContent = '→';
-    unlockBtn.setAttribute('aria-label', 'Desbloquear');
-  }
-
+function updatePageEditControls() {
   // Mostrar/ocultar botones de editar en tarjetas existentes
   document.querySelectorAll('.entry-actions').forEach(el => {
     el.classList.toggle('visible', isEditMode);
-  });
-}
-
-function toggleEditMode(enable) {
-  isEditMode = enable;
-  updateEditModeUI();
-}
-
-/* =============================================================
-   7. AUTENTICACIÓN
-   ============================================================= */
-let storedPassword = null;
-
-async function loadPassword() {
-  storedPassword = await fetchSettingsPassword();
-  if (!storedPassword) storedPassword = CONFIG.PASSWORD;
-}
-
-function handleAuth() {
-  const field = document.getElementById('passwordField');
-  const val = field.value.trim();
-
-  if (isEditMode) {
-    toggleEditMode(false);
-    return;
-  }
-
-  if (val === storedPassword) {
-    toggleEditMode(true);
-    field.value = '';
-  } else {
-    const hint = document.getElementById('authHint');
-    hint.textContent = 'la contraseña no coincide';
-    hint.style.color = '#8B0000';
-    setTimeout(() => {
-      if (!isEditMode) {
-        hint.textContent = 'Modo lectura';
-        hint.style.color = 'var(--c-secondary)';
-      }
-    }, 2000);
-  }
-}
-
-function initAuth() {
-  loadPassword();
-  document.getElementById('unlockBtn').addEventListener('click', handleAuth);
-  document.getElementById('passwordField').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') handleAuth();
   });
 }
 
@@ -291,7 +218,6 @@ async function loadEntries() {
   buildArchive(allEntries);
   renderCalendar(allEntries);
   renderFeed();
-  updateEditModeUI();
 }
 
 /* =============================================================
