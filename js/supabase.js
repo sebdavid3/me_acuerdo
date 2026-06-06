@@ -133,6 +133,33 @@ async function incrementVisitorCount() {
   return next;
 }
 
+/* ---------- Shoutbox ---------- */
+async function fetchShouts(limit = 20) {
+  if (!supabaseClient) return [];
+  const { data, error } = await supabaseClient
+    .from('shouts')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) {
+    console.error('Error cargando shouts:', error);
+    return [];
+  }
+  return data || [];
+}
+
+async function insertShout(name, message) {
+  if (!supabaseClient) return null;
+  const { data, error } = await supabaseClient
+    .from('shouts')
+    .insert([{ name, message }]);
+  if (error) {
+    console.error('Error guardando shout:', error);
+    return null;
+  }
+  return data;
+}
+
 async function fetchEntriesByMonth(year, month) {
   if (!supabaseClient) return [];
   const start = `${year}-${String(month).padStart(2, '0')}-01`;

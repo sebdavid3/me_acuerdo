@@ -198,6 +198,22 @@
           </div>
         </section>
 
+        <!-- Shoutbox estilo Neocities -->
+        <section class="panel-section shout-section">
+          <div class="panel-ornament">❀</div>
+          <h2 class="panel-title">Chat <button class="shout-refresh-btn" id="shoutRefresh" title="Actualizar">↻</button></h2>
+          <form class="shout-form" id="shoutForm">
+            <input type="text" id="shoutName" class="shout-name-field" placeholder="tu nombre (opcional)" maxlength="30">
+            <div class="shout-input-row">
+              <input type="text" id="shoutMsg" class="shout-msg-field" placeholder="deja un mensaje..." maxlength="200" required>
+              <button type="submit" class="shout-send-btn" id="shoutSend">✦</button>
+            </div>
+          </form>
+          <ul class="shout-list" id="shoutList">
+            <li class="shout-empty">Cargando...</li>
+          </ul>
+        </section>
+
         <!-- ♫ Reproductor de música -->
         <section class="panel-section player-section">
           <div class="panel-ornament">❀</div>
@@ -293,6 +309,7 @@
   <script src="js/archive.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/player.js"></script>
+  <script src="js/chat.js"></script>
   <script src="js/app.js"></script>
 
   <script>
