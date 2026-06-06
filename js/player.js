@@ -7,6 +7,8 @@
     { name: 'Dearly Beloved',      file: 'Kingdom Hearts Dearly Beloved (Original Version).mp3',                game: 'Kingdom Hearts' },
     { name: 'Love Theme',          file: 'MOTHER 3 Love Theme - MOTHER 3 OST.mp3',                              game: 'Mother 3' },
     { name: "Zelda's Theme",       file: "Zelda's Theme - The Legend of Zelda_ Ocarina of Time OST.mp3",        game: 'Ocarina of Time' },
+    { name: 'Kairi',               file: 'Kairi.mp3',                                                                      game: 'Kingdom Hearts' },
+    { name: "Rosalina's Storybook",file: "Rosalina's Storybook Theme Extended - Super Mario Galaxy.mp3",                  game: 'Super Mario Galaxy' },
   ];
 
   const audio      = document.getElementById('playerAudio');
