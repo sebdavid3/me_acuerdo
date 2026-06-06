@@ -202,16 +202,20 @@
         <section class="panel-section shout-section">
           <div class="panel-ornament">❀</div>
           <h2 class="panel-title">Chat <button class="shout-refresh-btn" id="shoutRefresh" title="Actualizar">↻</button></h2>
-          <form class="shout-form" id="shoutForm">
-            <input type="text" id="shoutName" class="shout-name-field" placeholder="tu nombre (opcional)" maxlength="30">
-            <div class="shout-input-row">
-              <input type="text" id="shoutMsg" class="shout-msg-field" placeholder="deja un mensaje..." maxlength="200" required>
-              <button type="submit" class="shout-send-btn" id="shoutSend">✦</button>
+          <div class="chat-container">
+            <div class="chat-messages" id="shoutList">
+              <div class="chat-empty">Cargando...</div>
             </div>
-          </form>
-          <ul class="shout-list" id="shoutList">
-            <li class="shout-empty">Cargando...</li>
-          </ul>
+            <form class="chat-input-area" id="shoutForm">
+              <div class="chat-input-row">
+                <input type="text" id="shoutName" class="chat-name-field" placeholder="tu nombre" maxlength="30">
+                <input type="text" id="shoutMsg" class="chat-msg-field" placeholder="deja un mensaje..." maxlength="200" required>
+                <button type="submit" class="shout-send-btn" id="shoutSend" title="Enviar">
+                  <img src="assets/buttons/Pixel Buttons/Next_Idle.png" alt="Enviar" class="shout-send-img" id="shoutSendImg">
+                </button>
+              </div>
+            </form>
+          </div>
         </section>
 
         <!-- ♫ Reproductor de música -->

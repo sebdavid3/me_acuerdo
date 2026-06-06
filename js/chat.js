@@ -14,19 +14,20 @@
   }
 
   function renderShouts() {
-    const list = document.getElementById('shoutList');
-    if (!list) return;
-    list.innerHTML = '';
+    const container = document.getElementById('shoutList');
+    if (!container) return;
+    container.innerHTML = '';
     shouts.forEach(s => {
-      const li = document.createElement('li');
-      li.className = 'shout-item';
-      li.innerHTML = '<span class="shout-name">' + escapeHtml(s.name || 'anónimo') + ':</span> ' +
-                     '<span class="shout-msg">' + escapeHtml(trimMessage(s.message)) + '</span>';
-      list.appendChild(li);
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-bubble';
+      bubble.innerHTML = '<span class="chat-bubble-name">' + escapeHtml(s.name || 'anónimo') + '</span>' +
+                         '<span class="chat-bubble-text">' + escapeHtml(trimMessage(s.message)) + '</span>';
+      container.appendChild(bubble);
     });
     if (shouts.length === 0) {
-      list.innerHTML = '<li class="shout-empty">Sé el primero en dejar un mensaje ✦</li>';
+      container.innerHTML = '<div class="chat-empty">Sé el primero en dejar un mensaje ✦</div>';
     }
+    container.scrollTop = container.scrollHeight;
   }
 
   async function loadShouts() {
@@ -39,20 +40,21 @@
     const nameInput = document.getElementById('shoutName');
     const msgInput = document.getElementById('shoutMsg');
     const sendBtn = document.getElementById('shoutSend');
+    const sendImg = document.getElementById('shoutSendImg');
 
     const name = (nameInput.value || '').trim().slice(0, 30) || 'anónimo';
     const message = (msgInput.value || '').trim().slice(0, 200);
     if (!message) return;
 
     sendBtn.disabled = true;
-    sendBtn.textContent = '...';
+    sendImg.src = 'assets/buttons/Pixel Buttons/Next_Pushed.png';
 
     await insertShout(name, message);
 
     nameInput.value = '';
     msgInput.value = '';
     sendBtn.disabled = false;
-    sendBtn.textContent = '✦ Enviar';
+    sendImg.src = 'assets/buttons/Pixel Buttons/Next_Idle.png';
 
     await loadShouts();
   }
@@ -69,9 +71,9 @@
     }
 
     if (CONFIG.SUPABASE_ANON_KEY === 'REEMPLAZAR_CON_ANON_KEY') {
-      const list = document.getElementById('shoutList');
-      if (list) {
-        list.innerHTML = '<li class="shout-empty">Conecta Supabase para activar el chat ✦</li>';
+      const container = document.getElementById('shoutList');
+      if (container) {
+        container.innerHTML = '<div class="chat-empty">Conecta Supabase para activar el chat ✦</div>';
       }
       return;
     }
