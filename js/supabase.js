@@ -115,15 +115,23 @@ async function incrementVisitorCount() {
   const current = await fetchVisitorCount();
   const next = current + 1;
 
-  const { error } = await supabaseClient
+  const { error: insertError } = await supabaseClient
     .from('settings')
-    .insert({ key: 'visitor_count', value: String(next) })
-    .onConflict('key')
-    .merge();
+    .insert({ key: 'visitor_count', value: String(next) });
 
-  if (error) {
-    console.warn('No se pudo guardar el contador (¿falta permiso en Supabase?). Se muestra igual.', error);
+  if (insertError && insertError.code === '23505') {
+    const { error: updateError } = await supabaseClient
+      .from('settings')
+      .update({ value: String(next) })
+      .eq('key', 'visitor_count');
+
+    if (updateError) {
+      console.warn('No se pudo guardar el contador', updateError);
+    }
+  } else if (insertError) {
+    console.warn('No se pudo guardar el contador', insertError);
   }
+
   return next;
 }
 
