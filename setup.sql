@@ -58,6 +58,14 @@ DROP POLICY IF EXISTS "Allow public read settings" ON public.settings;
 CREATE POLICY "Allow public read settings" ON public.settings
   FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Allow public insert settings" ON public.settings;
+CREATE POLICY "Allow public insert settings" ON public.settings
+  FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public update settings" ON public.settings;
+CREATE POLICY "Allow public update settings" ON public.settings
+  FOR UPDATE USING (true);
+
 -- 6. Shoutbox acceso público
 ALTER TABLE public.shouts ENABLE ROW LEVEL SECURITY;
 
